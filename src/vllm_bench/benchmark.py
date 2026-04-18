@@ -11,7 +11,6 @@ import httpx
 
 from .metrics import RequestResult
 
-
 _DEFAULT_PROMPT = (
     "Explain the concept of transformer attention mechanisms in detail, "
     "covering self-attention, multi-head attention, and their computational complexity."

@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import json
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -87,15 +85,33 @@ def _metrics_to_dict(m: AggregatedMetrics, model: str, streaming: bool) -> dict:
 
 @app.command()
 def run(
-    url: str = typer.Option("http://localhost:8000", "--url", "-u", help="Base URL of the vLLM server."),
-    model: str = typer.Option(..., "--model", "-m", help="Model name to benchmark (e.g. meta-llama/Llama-3-8B-Instruct)."),
-    num_requests: int = typer.Option(100, "--num-requests", "-n", help="Total number of requests to send.", min=1),
-    concurrency: int = typer.Option(10, "--concurrency", "-c", help="Number of concurrent requests.", min=1),
-    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Prompt text to use. Defaults to a built-in prompt."),
-    max_tokens: int = typer.Option(256, "--max-tokens", help="Maximum tokens to generate per request.", min=1),
-    streaming: bool = typer.Option(True, "--streaming/--no-streaming", help="Use streaming mode (default: on)."),
-    api_key: Optional[str] = typer.Option(None, "--api-key", envvar="VLLM_API_KEY", help="API key for the vLLM server."),
-    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Write JSON report to this file."),
+    url: str = typer.Option(
+        "http://localhost:8000", "--url", "-u", help="Base URL of the vLLM server."
+    ),
+    model: str = typer.Option(
+        ..., "--model", "-m", help="Model name to benchmark (e.g. meta-llama/Llama-3-8B-Instruct)."
+    ),
+    num_requests: int = typer.Option(
+        100, "--num-requests", "-n", help="Total number of requests to send.", min=1
+    ),
+    concurrency: int = typer.Option(
+        10, "--concurrency", "-c", help="Number of concurrent requests.", min=1
+    ),
+    prompt: str | None = typer.Option(
+        None, "--prompt", "-p", help="Prompt text to use. Defaults to a built-in prompt."
+    ),
+    max_tokens: int = typer.Option(
+        256, "--max-tokens", help="Maximum tokens to generate per request.", min=1
+    ),
+    streaming: bool = typer.Option(
+        True, "--streaming/--no-streaming", help="Use streaming mode (default: on)."
+    ),
+    api_key: str | None = typer.Option(
+        None, "--api-key", envvar="VLLM_API_KEY", help="API key for the vLLM server."
+    ),
+    output: Path | None = typer.Option(
+        None, "--output", "-o", help="Write JSON report to this file."
+    ),
 ) -> None:
     """Run a load benchmark against a vLLM OpenAI-compatible endpoint.
 
@@ -156,7 +172,10 @@ def run(
             err.print(f"[yellow]Sample errors:[/yellow] {'; '.join(sample_errors)}")
 
     if not any(r.success for r in results):
-        err.print("\n[red]All requests failed.[/red] Check that the server is running and the model name is correct.")
+        err.print(
+            "\n[red]All requests failed.[/red] Check that the server is running"
+            " and the model name is correct."
+        )
         raise typer.Exit(1)
 
     metrics = aggregate(results, wall_time)

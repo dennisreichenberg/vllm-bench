@@ -9,8 +9,14 @@ from vllm_bench.metrics import AggregatedMetrics, RequestResult, aggregate
 
 def test_aggregate_basic():
     results = [
-        RequestResult(success=True, ttft_s=0.1, total_s=1.0, tokens_generated=50, inter_token_latencies=[0.02] * 10),
-        RequestResult(success=True, ttft_s=0.2, total_s=2.0, tokens_generated=100, inter_token_latencies=[0.03] * 10),
+        RequestResult(
+            success=True, ttft_s=0.1, total_s=1.0,
+            tokens_generated=50, inter_token_latencies=[0.02] * 10,
+        ),
+        RequestResult(
+            success=True, ttft_s=0.2, total_s=2.0,
+            tokens_generated=100, inter_token_latencies=[0.03] * 10,
+        ),
         RequestResult(success=False, error="connection refused"),
     ]
     metrics = aggregate(results, total_wall_s=2.5)

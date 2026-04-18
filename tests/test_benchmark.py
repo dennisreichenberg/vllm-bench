@@ -5,8 +5,6 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from vllm_bench.benchmark import (
     _DEFAULT_PROMPT,
     _run_non_streaming_request,
@@ -14,7 +12,6 @@ from vllm_bench.benchmark import (
     run_benchmark,
 )
 from vllm_bench.metrics import RequestResult
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -227,7 +224,9 @@ async def test_non_streaming_http_error_returns_failure():
     mock_client = AsyncMock()
     mock_client.post = AsyncMock(return_value=mock_response)
 
-    result = await _run_non_streaming_request(mock_client, "http://localhost/v1/chat/completions", {})
+    result = await _run_non_streaming_request(
+        mock_client, "http://localhost/v1/chat/completions", {}
+    )
 
     assert result.success is False
 
@@ -268,7 +267,9 @@ async def test_run_benchmark_streaming_calls_streaming_fn():
 async def test_run_benchmark_non_streaming_calls_non_streaming_fn():
     successful = RequestResult(success=True, ttft_s=0.1, total_s=1.0, tokens_generated=10)
 
-    with patch("vllm_bench.benchmark._run_non_streaming_request", return_value=successful) as mock_fn:
+    with patch(
+        "vllm_bench.benchmark._run_non_streaming_request", return_value=successful
+    ) as mock_fn:
         results, wall = await run_benchmark(
             base_url="http://localhost:8000",
             model="m",

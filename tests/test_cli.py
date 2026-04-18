@@ -77,6 +77,7 @@ def test_build_summary_table_title_contains_model():
 
 def test_build_summary_table_streaming_mode_label():
     from io import StringIO
+
     from rich.console import Console
 
     m = make_metrics()
@@ -89,6 +90,7 @@ def test_build_summary_table_streaming_mode_label():
 
 def test_build_summary_table_non_streaming_mode_label():
     from io import StringIO
+
     from rich.console import Console
 
     m = make_metrics()
@@ -147,7 +149,9 @@ def test_metrics_to_dict_requests_block():
 
 
 def test_metrics_to_dict_throughput_block():
-    m = make_metrics(tokens_per_second_mean=55.5, tokens_per_second_p50=50.0, request_throughput=3.0)
+    m = make_metrics(
+        tokens_per_second_mean=55.5, tokens_per_second_p50=50.0, request_throughput=3.0
+    )
     d = _metrics_to_dict(m, "m", streaming=True)
     assert d["throughput"]["tokens_per_second_mean"] == pytest.approx(55.5, abs=0.01)
     assert d["throughput"]["tokens_per_second_p50"] == pytest.approx(50.0, abs=0.01)
